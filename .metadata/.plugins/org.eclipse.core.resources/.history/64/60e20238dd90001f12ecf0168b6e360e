@@ -1,0 +1,28 @@
+package github.cesaradrianer.io.runnerz;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import github.cesaradrianer.io.runnerz.run.Location;
+import github.cesaradrianer.io.runnerz.run.Run;
+
+@SpringBootApplication
+public class RunnerzApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RunnerzApplication.class, args);
+	}
+	
+	@Bean
+	CommandLineRunner runner() {
+		return args -> {
+			new Run(1, "Morning Run", LocalDateTime.now(), LocalDateTime.now().plus(3, ChronoUnit.HOURS), 10, Location.OUTDOORS);
+		};
+	}
+
+}

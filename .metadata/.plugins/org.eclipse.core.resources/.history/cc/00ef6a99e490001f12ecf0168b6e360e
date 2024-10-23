@@ -1,0 +1,62 @@
+package github.cesaradrianer.io.runnerz.run;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.stereotype.Repository;
+import jakarta.annotation.PostConstruct;
+
+@Repository
+public class RunRepository {
+	
+	List<Run> runList = new ArrayList<Run>();
+	
+	public List<Run> getAll() {
+		return runList;
+	}
+	
+	public Optional<Run> findById(Integer id) {
+		return runList.stream().filter(run -> run.id().equals(id)).findFirst();
+	}
+	
+	public void create(Run run) {
+		runList.add(run);
+	}
+	
+	public void update(Run run, Integer id) {
+		
+		Optional<Run> existingRun = findById(id);
+		
+		if (existingRun.isPresent()) {
+			runList.set(runList.indexOf(existingRun.get()), run);
+		}
+		
+	}
+	
+	public void delete(Integer id) {
+		runList.removeIf(run -> run.id().equals(id));
+	}
+	
+	@PostConstruct
+	private void init() {
+		runList.add(
+				new Run(1, 
+						"Monday Run", 
+						LocalDateTime.now(), 
+						LocalDateTime.now().plusHours(6), 
+						10, 
+						Location.OUTDOORS)
+				);
+		runList.add(
+				new Run(2, 
+						"Saturday Evening Run", 
+						LocalDateTime.now(), 
+						LocalDateTime.now().plusHours(9), 
+						1, 
+						Location.OUTDOORS)
+				);
+	}
+	
+}

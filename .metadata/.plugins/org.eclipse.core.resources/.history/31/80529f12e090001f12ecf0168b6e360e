@@ -1,0 +1,17 @@
+package github.cesaradrianer.io.runnerz.run;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class RunRepository {
+	
+	List<Run> runList = new ArrayList<Run>();
+	
+	public List<Run> getAll() {
+		return runList;
+	}
+	
+}

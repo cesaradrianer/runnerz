@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
+
 import jakarta.annotation.PostConstruct;
 
 @Repository
@@ -22,34 +24,56 @@ public class RunRepository {
 	}
 	
 	public List<Run> getAll() {
-		return client.sql("SELECT * FROM RUN").query(Run.class).list();
+		return client.sql("SELECT * FROM RUN")
+					 .query(Run.class)
+					 .list();
 	}
-	
-	/*List<Run> runList = new ArrayList<Run>();
-	
+		
 	public Optional<Run> findById(Integer id) {
-		return runList.stream().filter(run -> run.id().equals(id)).findFirst();
+		return client.sql("SELECT id,title,started_on,completed_on,miles,location FROM Run WHERE id = :id")
+					 .param(id)
+					 .query(Run.class)
+					 .optional();
 	}
 	
 	public void create(Run run) {
-		runList.add(run);
+		var updated = client.sql("INSERT INTO Run(id,title,started_on,completed_on,miles,location) values(?,?,?,?,?,?)")
+							.params(List.of(run.id(), 
+									   	   run.title(),
+									   	   run.startedOn(),
+									   	   run.completedOn(),
+									   	   run.miles(),
+									   	   run.location().toString())).update();
+		Assert.state(updated == 1, "Failed to create Run: " + run.title());
 	}
 	
 	public void update(Run run, Integer id) {
 		
-		Optional<Run> existingRun = findById(id);
-		
-		if (existingRun.isPresent()) {
-			runList.set(runList.indexOf(existingRun.get()), run);
-		}
+		var updated = client.sql("UPDATE run SET title = ?, started_on = ?, completed_on = ?, miles = ?, location = ? where id = ?")
+							.params(List.of(run.id(),
+											run.title(),
+											run.startedOn(),
+											run.completedOn(),
+											run.miles(),
+											run.location().toString(), id)).update();
+		Assert.state(updated == 1, "Failed to update Run: " + run.title());
 		
 	}
 	
 	public void delete(Integer id) {
-		runList.removeIf(run -> run.id().equals(id));
+		var updated = client.sql("DELETE FROM Run WHERE id = :id").param(id, id).update();
+		Assert.state(id == 1, "Failed to delete Run: " + id);
 	}
 	
-	@PostConstruct
+	public Integer count() {
+		return client.sql("SELECT * FROM RUN").query().listOfRows().size();
+	}
+	
+	public void saveAll(List<Run> runList) {
+		runList.stream().forEach(this::create);
+	}
+	
+	/*@PostConstruct
 	private void init() {
 		runList.add(
 				new Run(1, 

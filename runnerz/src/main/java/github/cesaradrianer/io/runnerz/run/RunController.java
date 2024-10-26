@@ -31,7 +31,7 @@ public class RunController {
 		return runRepository.getAll();
 	}
 	
-	/*@GetMapping("/{id}")
+	@GetMapping("/{id}")
 	Run findById(@PathVariable Integer id) {
 		
 		Optional<Run> run = runRepository.findById(id);
@@ -58,6 +58,6 @@ public class RunController {
 	@DeleteMapping("/{id}")
 	void delete(@PathVariable Integer id) {
 		runRepository.delete(id);
-	}*/
+	}
 	
 }
